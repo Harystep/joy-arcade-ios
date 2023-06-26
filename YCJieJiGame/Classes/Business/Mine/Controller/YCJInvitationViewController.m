@@ -121,6 +121,7 @@
         make.right.equalTo(self.view).offset(-kMargin);
         make.top.equalTo(self.contentBgView.mas_bottom).offset(20);
         make.height.mas_equalTo(kSize(170));
+        make.bottom.mas_equalTo(self.scrollView.mas_bottom).inset(20);
     }];
     
     [self.inviteCodeBgView addSubview:self.contentCodeBgView1];
