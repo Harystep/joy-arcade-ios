@@ -49,14 +49,14 @@ UICollectionViewDelegateFlowLayout>
     if (net) {
         [self removeEmptyView];
     } else {
-        [self showError:@"网络异常，请稍后重试"];
+        [self showError:ZCLocalizedString(@"网络异常，请稍后重试", nil)];
     }
 }
 
 - (void)requestExchangeList {
     [JKNetWorkManager getRequestWithUrlPath:JKJifen2JBListUrlKey parameters:@{} finished:^(JKNetWorkResult * _Nonnull result) {
         if (result.error) {
-            [self showError:@"网络异常，请稍后重试"];
+            [self showError:ZCLocalizedString(@"网络异常，请稍后重试", nil)];
         }else {
             [self removeEmptyView];
             self.exchangeList = [YCJExchangeModel mj_objectArrayWithKeyValuesArray:result.resultData[@"list"]];
@@ -121,7 +121,7 @@ UICollectionViewDelegateFlowLayout>
     if ([[YCJUserInfoManager sharedInstance] isLogin:self]) {
         [self.view endEditing:YES];
         if (self.exchangeTF.text.length <= 0) {
-            [MBProgressHUD showError:@"请输入钻石数量"];
+            [MBProgressHUD showError:ZCLocalizedString(@"请输入钻石数量", nil)];
             return;
         }
         YCJExchangeCoinsAlertView *alert = [[YCJExchangeCoinsAlertView alloc] init];
