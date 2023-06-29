@@ -29,26 +29,26 @@ UITableViewDelegate>
 }
 
 - (void)configUI {
-
-    [self.view addSubview:self.tableView];
-    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(kMargin);
-        make.right.mas_equalTo(-kMargin);
-        make.top.mas_equalTo(kStatusBarPlusNaviBarHeight + 15);
-        make.height.mas_offset(40 + kSize(44) * self.dataMuArr.count);
-    }];
     
     UIView *lanView = [[UIView alloc] init];
     [self.view addSubview:lanView];
     [lanView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.trailing.mas_equalTo(self.view).inset(kMargin);
         make.height.mas_equalTo(50);
-        make.top.mas_equalTo(self.tableView.mas_bottom).offset(10);
+        make.top.mas_equalTo(kStatusBarPlusNaviBarHeight + 15);
     }];
     lanView.backgroundColor = kCommonWhiteColor;
     lanView.cornerRadius = kSize(8);
     
     [self setupLanViewSubviews:lanView];
+    
+    [self.view addSubview:self.tableView];
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(kMargin);
+        make.right.mas_equalTo(-kMargin);
+        make.top.mas_equalTo(lanView.mas_bottom).offset(kMargin);
+        make.height.mas_offset(40 + kSize(44) * self.dataMuArr.count);
+    }];
 }
 
 - (void)setupLanViewSubviews:(UIView *)lanView {
@@ -78,6 +78,22 @@ UITableViewDelegate>
         make.trailing.mas_equalTo(lanView.mas_trailing).inset(kMargin);
     }];
     
+    UILabel *subL = [[UILabel alloc] init];
+    subL.font = kPingFangMediumFont(14);
+    subL.textColor = kShallowBlackColor;
+    subL.textAlignment = NSTextAlignmentLeft;
+    [lanView addSubview:subL];
+    [subL mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(lanView.mas_centerY);
+        make.trailing.mas_equalTo(arrowImageView.mas_leading).inset(kSize(8));
+    }];
+    if([SJLocalTool getCurrentLanguage] == 3) {
+        subL.text = @"English";
+    } else if ([SJLocalTool getCurrentLanguage] == 2) {
+        subL.text = @"繁体中文";
+    } else {
+        subL.text = @"简体中文";
+    }
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(setLanguageOp)];
     [lanView addGestureRecognizer:tap];
     
@@ -87,16 +103,19 @@ UITableViewDelegate>
     UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:ZCLocalizedString(@"语言设置", nil) message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     WeakSelf;
     UIAlertAction *lan = [UIAlertAction actionWithTitle:ZCLocalizedString(@"简体中文", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if([SJLocalTool getCurrentLanguage] == 1) return;
         [SJLocalTool saveUserLanguageType:1];
         [weakSelf turnWithDuration:1.25 completion:^{
         }];
     }];
     UIAlertAction *hant = [UIAlertAction actionWithTitle:ZCLocalizedString(@"繁体中文", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if([SJLocalTool getCurrentLanguage] == 2) return;
         [SJLocalTool saveUserLanguageType:2];
         [weakSelf turnWithDuration:1.25 completion:^{
         }];
     }];
     UIAlertAction *en = [UIAlertAction actionWithTitle:ZCLocalizedString(@"英文", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if([SJLocalTool getCurrentLanguage] == 3) return;
         [SJLocalTool saveUserLanguageType:3];
         [weakSelf turnWithDuration:1.25 completion:^{
         }];
@@ -168,14 +187,14 @@ UITableViewDelegate>
         userModel.actionBlock = ^(YCJMineInfoModel *info){
             YCJBaseWebViewController *web = [[YCJBaseWebViewController alloc] init];
             web.url = JKUserAgreementUrlKey;
-            web.navigationItem.title = @"用户协议";
+            web.navigationItem.title = ZCLocalizedString(@"用户协议", nil);
             [self.navigationController pushViewController:web animated:YES];
         };
         YCJMineInfoModel *privateModel = [YCJMineInfoModel modelWithLeftIcon:@"icon_setting_yinsizhengce" leftStr:ZCLocalizedString(@"隐私政策", nil) rightStr:@""];
         privateModel.actionBlock = ^(YCJMineInfoModel *info) {
             YCJBaseWebViewController *web = [[YCJBaseWebViewController alloc] init];
             web.url = JKPrivacyPolicyUrlKey;
-            web.navigationItem.title = @"隐私政策";
+            web.navigationItem.title = ZCLocalizedString(@"隐私政策", nil);
             [self.navigationController pushViewController:web animated:YES];
         };
         
@@ -186,7 +205,7 @@ UITableViewDelegate>
             canAlert.commonAlertViewDoneClickBlock = ^{
                 [JKNetWorkManager postRequestWithUrlPath:JKAccountCancelUrlKey parameters:@{} finished:^(JKNetWorkResult * _Nonnull result) {
                     if(!result.error && [result.resultData isKindOfClass:[NSDictionary class]]) {
-                        [MBProgressHUD showSuccess:@"注销成功"];
+                        [MBProgressHUD showSuccess:ZCLocalizedString(@"注销成功", nil)];
                         self.tabBarController.selectedIndex = 2;
                         [[YCJUserInfoManager sharedInstance] deleteUserInfo];
                         [self.navigationController popToRootViewControllerAnimated:YES];

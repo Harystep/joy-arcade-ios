@@ -36,9 +36,11 @@
         NSLog(@"result.resultData = %@",result.resultData);
         return result;
     }else {
-        if(code == 90003) {
+        if(code == 401) {
            UIWindow *window = [UIApplication sharedApplication].keyWindow;
+           [[YCJUserInfoManager sharedInstance] deleteUserInfo];
            [window.rootViewController presentViewController:[YCJLoginViewController new] animated:YES completion:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kUserLoginSuckey object:nil];
         }
         NSError *error = [NSError errorWithDomain:msg code:code userInfo:@{NSLocalizedDescriptionKey: msg}];
         JKNetWorkResult *result = [[JKNetWorkResult alloc] init];

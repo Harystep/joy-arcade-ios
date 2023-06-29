@@ -44,6 +44,11 @@ UICollectionViewDelegateFlowLayout>
     
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[YCJUserInfoManager sharedInstance] reloadUserInfo];
+}
+
 #pragma mark -
 #pragma mark -- initPPGameSDK
 - (void)initPPGameSDK{
@@ -144,7 +149,7 @@ UICollectionViewDelegateFlowLayout>
             }
         }else {
             /// 进入房间成功
-            [MBProgressHUD showSuccess:@"进入房间成功"];
+            [MBProgressHUD showSuccess:ZCLocalizedString(@"进入房间成功", nil)];
             
             if (![[JKTools handelString:roomModel.machineSn] isEqualToString:@""]){
                 [SDGameModule presentViewController:roomModel.machineSn roomId:roomModel.roomId machineType:roomModel.machineType.integerValue inRootController:self];

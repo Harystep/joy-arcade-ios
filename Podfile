@@ -40,11 +40,15 @@ target 'YCJieJiGame' do
   
   #pod 'wawajiGame', :git=>'https://github.com/Harystep/toolSpec.git'
   
-  pod 'SJARCPlayer',  '~> 0.1.5'
+  pod 'SJARCPlayer',  '~> 0.1.6'
   
   pod 'SwiftyStoreKit', '0.16.1'
   
   pod 'DZNEmptyDataSet','1.8.1'
+
+  pod 'UMCommon', '~> 7.4.1'
+  pod 'UMDevice', '~> 3.1.0'
+
   
   post_install do |installer|
     installer.pods_project.targets.each do |target|

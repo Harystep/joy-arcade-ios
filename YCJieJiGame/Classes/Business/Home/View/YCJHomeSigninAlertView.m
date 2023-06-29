@@ -30,6 +30,7 @@
 }
 
 - (void)setListModel:(YCJSignInListModel *)listModel {
+    _listModel = listModel;
     CGFloat padding = 15;
     CGFloat width = (kScreenWidth - 90 - 60) / 3;
     for (int i = 0; i < listModel.list.count - 1; i++) {
@@ -58,16 +59,27 @@
 }
 
 - (void)sureSignIn {
-    [JKNetWorkManager postRequestWithUrlPath:JKSigninUrlKey parameters:@{} finished:^(JKNetWorkResult * _Nonnull result) {
-        [self dismiss];
-        if(!result.error && [result.resultData isKindOfClass:[NSDictionary class]]) {
-            [MBProgressHUD hideHUD];
-            [MBProgressHUD showSuccess:ZCLocalizedString(@"签到成功", nil)];
-            [[YCJUserInfoManager sharedInstance] reloadUserInfo];
-        } else {
-            [MBProgressHUD showSuccess:result.resultObject[@"errMsg"]];
+    if ([YCJUserInfoManager sharedInstance].isLogin) {
+        if ([self.listModel.status isEqualToString:@"1"]) {
+            [JKNetWorkManager postRequestWithUrlPath:JKSigninUrlKey parameters:@{} finished:^(JKNetWorkResult * _Nonnull result) {
+                if(!result.error && [result.resultData isKindOfClass:[NSDictionary class]]) {
+                    [MBProgressHUD hideHUD];
+                    [MBProgressHUD showSuccess:ZCLocalizedString(@"签到成功", nil)];
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{                       
+                        [[YCJUserInfoManager sharedInstance] reloadUserInfo];
+                    });
+                } else {
+                    [MBProgressHUD showSuccess:result.resultObject[@"errMsg"]];
+                }
+                [self dismiss];
+            }];
         }
-    }];
+    } else {
+        if(self.jumpLoginBlock) {
+            [self dismiss];
+            self.jumpLoginBlock();
+        }
+    }
 }
 
 - (void)setupSubviews {
@@ -110,10 +122,10 @@
     self.frame = window.bounds;
     [window addSubview:self];
 
-    self.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
-    self.contentView.transform = CGAffineTransformMakeScale(1.1, 1.1);
+//    self.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
+    self.contentView.transform = CGAffineTransformMakeScale(1.25, 1.25);
     [UIView animateWithDuration:0.35 animations:^{
-        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
+        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.6];
         self.contentView.transform = CGAffineTransformIdentity;
     }];
 }
@@ -149,7 +161,7 @@
     if (!_contentBgView) {
         _contentBgView = [UIImageView new];
         _contentBgView.contentMode = UIViewContentModeScaleAspectFill;
-        _contentBgView.image = [UIImage imageNamed:@"icon_home_signin_bg"];
+        _contentBgView.image = [UIImage imageNamed:[NSString convertImageNameWithLanguage:@"icon_home_signin_bg"]];
     }
     return _contentBgView;
 }

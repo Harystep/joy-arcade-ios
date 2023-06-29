@@ -1,2 +1,1 @@
-# YCJieJiGame
-YCJieJiGame
+joy_arcade

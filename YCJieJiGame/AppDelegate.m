@@ -9,6 +9,7 @@
 #import "YCJTabBarController.h"
 #import "YCJLaunchViewController.h"
 #import "YCJieJiGame-Swift.h"
+#import <UMCommon/UMCommon.h>
 
 @interface AppDelegate ()
 
@@ -31,10 +32,19 @@
 //        self.window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
 //    }
     [self.window makeKeyAndVisible];
+    
     [[IAPHelper shared] setupIAP];
     
     [self setup3DTouchItems:application];
+    
+    [self configureUmengSDK];
+    
     return YES;
+}
+
+- (void)configureUmengSDK {
+    [UMConfigure initWithAppkey:@"649ba83ea1a164591b3ccfc4" channel:nil];
+    [UMConfigure setLogEnabled:YES];
 }
 
 - (void)setupAppearance {
@@ -84,7 +94,7 @@
     //不管APP在后台还是进程被杀死，只要通过主屏快捷操作进来的，都会调用这个方法
     NSLog(@"name:%@\ntype:%@", shortcutItem.localizedTitle, shortcutItem.type);
     if([shortcutItem.type isEqualToString:@"SHARE"]) {//分享
-
+        
     } else if ([shortcutItem.type isEqualToString:@"GAME"]) {//
         self.window.rootViewController = [[YCJTabBarController alloc] init];
         [self.window makeKeyAndVisible];

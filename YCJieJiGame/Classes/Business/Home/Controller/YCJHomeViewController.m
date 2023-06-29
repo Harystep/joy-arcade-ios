@@ -27,12 +27,18 @@
     
     [self configUI];
     [self requestRoomList];
+        
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshData) name:kUserLoginSuckey object:nil];
 }
 
 - (void)networkChange:(BOOL)net {
     if (net && self.roomCategoryList.count == 0) {
         [self requestRoomList];
     }
+}
+
+- (void)refreshData {
+    [self requestRoomList];
 }
 
 #pragma mark - loadData
@@ -42,7 +48,7 @@
             if(self.roomCategoryList.count > 0) {
                 [MBProgressHUD showError:result.error.localizedDescription];
             }
-        }else {
+        } else {
             self.roomCategoryList = [YCJGameRoomModel mj_objectArrayWithKeyValuesArray:result.resultData];
             [self gameContent];
         }
@@ -99,6 +105,12 @@
         make.width.mas_equalTo(kScreenWidth - 80);
         make.height.mas_equalTo(kScreenHeight - 200 - kTabBarHeight - 10);
     }];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.35 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.leftView showSignInAlertView];
+    });
+    
+    
 }
 
 #pragma mark - scrollview的代理方法，此方法在拖动scrollview时就会调用
